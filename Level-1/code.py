@@ -18,15 +18,18 @@ Item = namedtuple('Item', 'type, description, amount, quantity')
 
 def validorder(order: Order):
     net = 0
+    pay = 0
+    pro = 0
     
     for item in order.items:
         if item.type == 'payment':
-            net += item.amount
+            pay += item.amount * 1000
         elif item.type == 'product':
-            net -= item.amount * item.quantity
+            pro += item.amount * item.quantity * 1000
         else:
             return("Invalid item type: %s" % item.type)
-    
+    net = pay - pro
+    net = net / 1000
     if net != 0:
         return("Order ID: %s - Payment imbalance: $%0.2f" % (order.id, net))
     else:
