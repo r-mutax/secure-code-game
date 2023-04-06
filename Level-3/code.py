@@ -9,6 +9,14 @@ def source():
     TaxPayer('foo', 'bar').get_prof_picture(request.args["input"])
 ### Unrelated to the exercise -- Ends here -- Please ignore
 
+def safe_path(path):
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    filepath = os.path.normpath(os.path.join(base_dir, path))
+    if base_dir != os.path.commonpath([base_dir, filepath]):
+        print("not safe")
+        return None
+    return filepath
+
 class TaxPayer:
     
     def __init__(self, username, password):
@@ -30,7 +38,13 @@ class TaxPayer:
         # builds path
         base_dir = os.path.dirname(os.path.abspath(__file__))
         prof_picture_path = os.path.normpath(os.path.join(base_dir, path))
-    
+        prof_picture_path = os.path.normpath(prof_picture_path)
+        if base_dir != os.path.commonpath([base_dir, prof_picture_path]):
+            prof_picture_path = os.path.join(base_dir+ prof_picture_path)
+            return prof_picture_path
+
+        print(prof_picture_path)
+
         with open(prof_picture_path, 'rb') as pic:
             picture = bytearray(pic.read())
 
@@ -43,7 +57,13 @@ class TaxPayer:
         
         if not path:
             raise Exception("Error: Tax form is required for all users")
-       
+        
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        new_path = os.path.normpath(os.path.join(path))
+        if base_dir != os.path.commonpath([base_dir, new_path]):
+            new_path = os.path.join(base_dir+  new_path)
+            return new_path
+
         with open(path, 'rb') as form:
             tax_data = bytearray(form.read())
 
